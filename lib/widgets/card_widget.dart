@@ -20,11 +20,14 @@ class CardWidget extends StatelessWidget {
         title: Text(
           "Rent",
           style: AppTextStyles.body2(
-            fontweight: FontWeight.w600,
+            fontweight: FontWeight.w700,
             color: Colors.black,
           ),
         ),
-        subtitle: Text("10 June 25"),
+        subtitle: Text(
+          "10 June 25",
+          style: AppTextStyles.body2(fontweight: FontWeight.w400),
+        ),
         trailing: Text(
           index % 2 == 0 ? "+ Rp.20.000" : "- Rp.200.000",
           style: AppTextStyles.body2(

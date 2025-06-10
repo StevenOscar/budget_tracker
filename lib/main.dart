@@ -1,5 +1,7 @@
 import 'package:budget_tracker/screens/add_screen.dart';
+import 'package:budget_tracker/screens/login_screen.dart';
 import 'package:budget_tracker/screens/main_screen.dart';
+import 'package:budget_tracker/screens/register_screen.dart';
 import 'package:budget_tracker/screens/transaction_history_screen.dart';
 import 'package:budget_tracker/splash_screen.dart';
 import 'package:budget_tracker/styles/app_color.dart';
@@ -29,6 +31,8 @@ class MyApp extends StatelessWidget {
       ],
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        RegisterScreen.id: (context) => RegisterScreen(),
         MainScreen.id: (context) => MainScreen(),
         AddScreen.id: (context) => AddScreen(),
         TransactionHistoryScreen.id: (context) => TransactionHistoryScreen(),

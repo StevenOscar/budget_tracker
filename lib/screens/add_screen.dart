@@ -25,6 +25,7 @@ class _AddScreenState extends State<AddScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -36,119 +37,140 @@ class _AddScreenState extends State<AddScreen> {
               Navigator.pop(context);
             },
             icon: CircleAvatar(
-              radius: 18,
+              radius: 20,
               backgroundColor: AppColor.mainGreen40,
-              child: Icon(Icons.arrow_back, color: AppColor.mainGreen),
+              child: Icon(
+                Icons.arrow_back,
+                size: 28,
+                color: AppColor.mainGreen,
+              ),
             ),
           ),
         ),
-        title: Text("Add Transaction"),
+        title: Text(
+          "Add Transaction",
+          style: AppTextStyles.heading3(
+            fontweight: FontWeight.w700,
+            color: AppColor.mainGreen,
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           children: [
             Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.calendar_month, color: AppColor.mainGreen),
-                          SizedBox(width: 12),
-                          Text(
-                            DateFormat(
-                              "EEEE, d MMMM yyyy",
-                              "EN_en",
-                            ).format(dateValue),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.alarm, color: AppColor.mainGreen),
-                          SizedBox(width: 12),
-                          Text(
-                            "${timeValue.hour.toString()}:${timeValue.minute.toString().padLeft(2, '0')}",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColor.mainGreen40,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ),
-                SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.mainGreen,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.calendar_month,
+                                color: AppColor.mainGreen,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                DateFormat(
+                                  "EEEE, d MMMM yyyy",
+                                  "EN_en",
+                                ).format(dateValue),
+                                style: AppTextStyles.body1(
+                                  fontweight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                          onPressed: () async {
-                            final DateTime? selectedDate = await showDatePicker(
-                              context: context,
-                              initialDate: dateValue,
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100),
-                            );
-                            if (selectedDate != null) {
-                              setState(() {
-                                dateValue = selectedDate;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Select Date",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.alarm, color: AppColor.mainGreen),
+                              SizedBox(width: 8),
+                              Text(
+                                "${timeValue.hour.toString()}:${timeValue.minute.toString().padLeft(2, '0')}",
+                                style: AppTextStyles.body1(
+                                  fontweight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.mainGreen,
-                          ),
-                          onPressed: () async {
-                            final TimeOfDay? selectedTime =
-                                await showTimePicker(
-                                  context: context,
-                                  initialTime: timeValue,
-                                );
-                            if (selectedTime != null) {
-                              setState(() {
-                                timeValue = selectedTime;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Select Time",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                      SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColor.mainGreen,
+                                ),
+                                onPressed: () async {
+                                  final DateTime? selectedDate =
+                                      await showDatePicker(
+                                        context: context,
+                                        initialDate: dateValue,
+                                        firstDate: DateTime.now(),
+                                        lastDate: DateTime(2100),
+                                      );
+                                  if (selectedDate != null) {
+                                    setState(() {
+                                      dateValue = selectedDate;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "Select Date",
+                                  style: AppTextStyles.body2(
+                                    fontweight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColor.mainGreen,
+                                ),
+                                onPressed: () async {
+                                  final TimeOfDay? selectedTime =
+                                      await showTimePicker(
+                                        context: context,
+                                        initialTime: timeValue,
+                                      );
+                                  if (selectedTime != null) {
+                                    setState(() {
+                                      timeValue = selectedTime;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "Select Time",
+                                  style: AppTextStyles.body2(
+                                    fontweight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -156,7 +178,7 @@ class _AddScreenState extends State<AddScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 12),
             Row(
               children: [
                 Radio(
@@ -172,9 +194,9 @@ class _AddScreenState extends State<AddScreen> {
                 ),
                 Text(
                   "Expense",
-                  style: TextStyle(
+                  style: AppTextStyles.body1(
+                    fontweight: FontWeight.w500,
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(width: 20),
@@ -191,14 +213,14 @@ class _AddScreenState extends State<AddScreen> {
                 ),
                 Text(
                   "Income",
-                  style: TextStyle(
+                  style: AppTextStyles.body1(
+                    fontweight: FontWeight.w500,
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 8),
             TextFormFieldWidget(
               controller: amountController,
               prefixIcon: Padding(
@@ -259,7 +281,12 @@ class _AddScreenState extends State<AddScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(e.category),
+                                    Text(
+                                      e.category,
+                                      style: AppTextStyles.body1(
+                                        fontweight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -273,7 +300,12 @@ class _AddScreenState extends State<AddScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(e.category),
+                                    Text(
+                                      e.category,
+                                      style: AppTextStyles.body1(
+                                        fontweight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -286,20 +318,23 @@ class _AddScreenState extends State<AddScreen> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.mainGreen,
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
                 ),
                 onPressed: () {},
                 child: Text(
                   "Submit",
-                  style: TextStyle(
+                  style: AppTextStyles.body1(
+                    fontweight: FontWeight.w600,
                     color: Colors.white,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

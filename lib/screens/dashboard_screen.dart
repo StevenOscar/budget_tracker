@@ -167,7 +167,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Budget this month",
+                        "Budget target this month",
                         style: AppTextStyles.body2(
                           fontweight: FontWeight.w500,
                           color: Colors.black,
@@ -231,7 +231,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               width: 1000000 / 2000000 * constraints.maxWidth,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: Color(0xff8cb85c),
+                                color:
+                                    1000000 / 2000000 <= 0.3
+                                        ? Color(0xff8cb85c)
+                                        : 1000000 / 2000000 <= 0.8
+                                        ? Colors.orange
+                                        : Colors.red.shade400,
                               ),
                             ),
                       ),
@@ -241,25 +246,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             SizedBox(height: 28),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Transaction History",
-                  style: AppTextStyles.heading4(fontweight: FontWeight.w800),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    "View All",
-                    style: AppTextStyles.body2(
-                      fontweight: FontWeight.w500,
-                      color: AppColor.mainGreen,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Transaction History",
+                    style: AppTextStyles.heading4(fontweight: FontWeight.w800),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      "View All",
+                      style: AppTextStyles.body2(
+                        fontweight: FontWeight.w500,
+                        color: AppColor.mainGreen,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 12),
             ListView.builder(
