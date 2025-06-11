@@ -11,11 +11,11 @@ import 'package:flutter/services.dart';
 class DetailScreen extends StatefulWidget {
   static const String id = "/detail";
   final Future<void> Function() loadTransaction;
-  final int userId;
+  final TransactionModel transaction;
   const DetailScreen({
     super.key,
     required this.loadTransaction,
-    required this.userId,
+    required this.transaction,
   });
 
   @override
@@ -24,14 +24,29 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   // TODO Create Detail & Edit Screen
-  int transactionType = 0;
   bool isEdit = false;
-  String selectedCategory = "Food";
-  DateTime dateValue = DateTime.now();
-  TimeOfDay timeValue = TimeOfDay.now();
-  final TextEditingController amountController = TextEditingController();
-  bool isAmountValid = false;
-  final TextEditingController notesController = TextEditingController();
+  bool isAmountValid = true;
+  late int transactionType;
+  late String selectedCategory;
+  late DateTime dateValue;
+  late TimeOfDay timeValue;
+  late TextEditingController amountController;
+  late TextEditingController notesController;
+
+  @override
+  void initState() {
+    super.initState();
+    transactionType = widget.transaction.type;
+    selectedCategory = widget.transaction.category;
+    dateValue = widget.transaction.date;
+    timeValue = widget.transaction.time;
+    amountController = TextEditingController(
+      text: widget.transaction.amount.toString(),
+    );
+    notesController = TextEditingController(
+      text: widget.transaction.note ?? "",
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +73,49 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                isEdit = !isEdit;
+              });
+            },
+            icon: Icon(isEdit ? Icons.cancel : Icons.edit),
+          ),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (_) => AlertDialog(
+                      title: Text("Delete Data"),
+                      content: Text("Are you sure want to delete this data?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await DbHelper.deleteTransactionData(
+                              widget.transaction.id!,
+                            );
+                            widget.loadTransaction().then((_) {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            });
+                          },
+                          child: Text("Set"),
+                        ),
+                      ],
+                    ),
+              );
+            },
+            icon: Icon(Icons.delete),
+          ),
+        ],
         title: Text(
           "Detail Transaction",
           style: AppTextStyles.heading3(
@@ -96,7 +154,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 DateFormatter.formatDayDateMonthYear(dateValue),
                                 style: AppTextStyles.body1(
                                   fontweight: FontWeight.w500,
-                                  color: Colors.black,
+                                  color: isEdit ? Colors.black : Colors.black54,
                                 ),
                               ),
                             ],
@@ -110,7 +168,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 "${timeValue.hour.toString()}:${timeValue.minute.toString().padLeft(2, '0')}",
                                 style: AppTextStyles.body1(
                                   fontweight: FontWeight.w500,
-                                  color: Colors.black,
+                                  color: isEdit ? Colors.black : Colors.black54,
                                 ),
                               ),
                             ],
@@ -118,69 +176,71 @@ class _DetailScreenState extends State<DetailScreen> {
                         ],
                       ),
                       SizedBox(height: 4),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.mainGreen,
-                                ),
-                                onPressed: () async {
-                                  final DateTime? selectedDate =
-                                      await showDatePicker(
-                                        context: context,
-                                        initialDate: dateValue,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime.now(),
-                                      );
-                                  if (selectedDate != null) {
-                                    setState(() {
-                                      dateValue = selectedDate;
-                                    });
-                                  }
-                                },
-                                child: Text(
-                                  "Select Date",
-                                  style: AppTextStyles.body2(
-                                    fontweight: FontWeight.w600,
-                                    color: Colors.white,
+                      isEdit
+                          ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColor.mainGreen,
+                                    ),
+                                    onPressed: () async {
+                                      final DateTime? selectedDate =
+                                          await showDatePicker(
+                                            context: context,
+                                            initialDate: dateValue,
+                                            firstDate: DateTime(2000),
+                                            lastDate: DateTime.now(),
+                                          );
+                                      if (selectedDate != null) {
+                                        setState(() {
+                                          dateValue = selectedDate;
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      "Select Date",
+                                      style: AppTextStyles.body2(
+                                        fontweight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.mainGreen,
-                                ),
-                                onPressed: () async {
-                                  final TimeOfDay? selectedTime =
-                                      await showTimePicker(
-                                        context: context,
-                                        initialTime: timeValue,
-                                      );
-                                  if (selectedTime != null) {
-                                    setState(() {
-                                      timeValue = selectedTime;
-                                    });
-                                  }
-                                },
-                                child: Text(
-                                  "Select Time",
-                                  style: AppTextStyles.body2(
-                                    fontweight: FontWeight.w600,
-                                    color: Colors.white,
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColor.mainGreen,
+                                    ),
+                                    onPressed: () async {
+                                      final TimeOfDay? selectedTime =
+                                          await showTimePicker(
+                                            context: context,
+                                            initialTime: timeValue,
+                                          );
+                                      if (selectedTime != null) {
+                                        setState(() {
+                                          timeValue = selectedTime;
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      "Select Time",
+                                      style: AppTextStyles.body2(
+                                        fontweight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          )
+                          : SizedBox(),
                     ],
                   ),
                 ),
@@ -193,12 +253,15 @@ class _DetailScreenState extends State<DetailScreen> {
                   activeColor: AppColor.mainGreen,
                   value: 0,
                   groupValue: transactionType,
-                  onChanged: (value) {
-                    setState(() {
-                      transactionType = value!;
-                      selectedCategory = "Food";
-                    });
-                  },
+                  onChanged:
+                      isEdit
+                          ? (value) {
+                            setState(() {
+                              transactionType = value as int;
+                              selectedCategory = "Food";
+                            });
+                          }
+                          : null,
                 ),
                 Text(
                   "Expense",
@@ -212,12 +275,15 @@ class _DetailScreenState extends State<DetailScreen> {
                   value: 1,
                   activeColor: AppColor.mainGreen,
                   groupValue: transactionType,
-                  onChanged: (value) {
-                    setState(() {
-                      transactionType = value!;
-                      selectedCategory = "Salary";
-                    });
-                  },
+                  onChanged:
+                      isEdit
+                          ? (value) {
+                            setState(() {
+                              transactionType = value as int;
+                              selectedCategory = "Salary";
+                            });
+                          }
+                          : null,
                 ),
                 Text(
                   "Income",
@@ -230,6 +296,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             SizedBox(height: 8),
             TextFormFieldWidget(
+              enabled: isEdit,
               controller: amountController,
               prefixIcon: Padding(
                 padding: const EdgeInsets.only(left: 15, top: 14, bottom: 15),
@@ -274,6 +341,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             SizedBox(height: isAmountValid ? 35 : 12),
             TextFormFieldWidget(
+              enabled: isEdit,
               controller: notesController,
               maxlines: 3,
               prefixIcon: Icon(Icons.note, size: 25, color: AppColor.mainGreen),
@@ -335,68 +403,74 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                             )
                             .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value!;
-                  });
-                },
+                onChanged:
+                    isEdit
+                        ? (value) {
+                          setState(() {
+                            selectedCategory = value as String;
+                          });
+                        }
+                        : null,
               ),
             ),
             SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.mainGreen,
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                ),
-                onPressed:
-                    isAmountValid
-                        ? () async {
-                          await DbHelper.insertTransactionData(
-                            data: TransactionModel(
-                              userId: widget.userId,
-                              amount: int.parse(amountController.text),
-                              note: notesController.text,
-                              type: transactionType,
-                              category: selectedCategory,
-                              date: dateValue,
-                              time: timeValue,
-                            ),
-                          );
-                          widget.loadTransaction();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: AppColor.mainGreen,
-                              content: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Center(
-                                  child: Text(
-                                    "Transaction saved",
-                                    style: AppTextStyles.body1(
-                                      fontweight: FontWeight.w500,
-                                      color: Colors.white,
+            isEdit
+                ? SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.mainGreen,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed:
+                        isAmountValid
+                            ? () async {
+                              await DbHelper.updateTransactionData(
+                                data: TransactionModel(
+                                  id: widget.transaction.id,
+                                  userId: widget.transaction.userId,
+                                  amount: int.parse(amountController.text),
+                                  note: notesController.text,
+                                  type: transactionType,
+                                  category: selectedCategory,
+                                  date: dateValue,
+                                  time: timeValue,
+                                ),
+                              );
+                              widget.loadTransaction();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: AppColor.mainGreen,
+                                  content: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Center(
+                                      child: Text(
+                                        "Transaction edited",
+                                        style: AppTextStyles.body1(
+                                          fontweight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                          Navigator.pop(context);
-                        }
-                        : null,
-                child: Text(
-                  "Submit",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w600,
-                    color: Colors.white,
+                              );
+                              Navigator.pop(context);
+                            }
+                            : null,
+                    child: Text(
+                      "Edit",
+                      style: AppTextStyles.body1(
+                        fontweight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                )
+                : SizedBox(),
           ],
         ),
       ),

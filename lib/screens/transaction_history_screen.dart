@@ -33,22 +33,22 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   List<DateTime> uniqueDates = [];
   Map<DateTime, List<TransactionModel>> groupedTransactions = {};
 
-  void filterList() {
-    // TODO Create filter
-    final uniqueDates = widget.transactionList
-        .map((t) => DateTime(t.date.year, t.date.month, t.date.day))
-        .toSet()
-        .toList()
-        .sort((a, b) => a.compareTo(b));
+  // void filterList() {
+  //   // TODO Create filter
+  //   final uniqueDates = widget.transactionList
+  //       .map((t) => DateTime(t.date.year, t.date.month, t.date.day))
+  //       .toSet()
+  //       .toList()
+  //       .sort((a, b) => a.compareTo(b));
 
-    for (var date in uniqueDates) {
-      groupedTransactions[date] =
-          widget.transactionList.where((t) {
-            final tDate = DateTime(t.date.year, t.date.month, t.date.day);
-            return tDate == date;
-          }).toList();
-    }
-  }
+  //   for (var date in uniqueDates) {
+  //     groupedTransactions[date] =
+  //         widget.transactionList.where((t) {
+  //           final tDate = DateTime(t.date.year, t.date.month, t.date.day);
+  //           return tDate == date;
+  //         }).toList();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

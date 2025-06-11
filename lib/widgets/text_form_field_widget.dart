@@ -8,6 +8,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
+  final bool? enabled;
   final bool? obscureText;
   final List<TextInputFormatter>? inputFormatters;
   final void Function()? onEditingComplete;
@@ -32,12 +33,14 @@ class TextFormFieldWidget extends StatelessWidget {
     this.obscureText,
     this.suffixIcon,
     this.onChanged,
+    this.enabled,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       onEditingComplete: onEditingComplete,
+      enabled: enabled,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
       cursorColor: AppColor.mainGreen,
@@ -64,6 +67,10 @@ class TextFormFieldWidget extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
         enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.black.withAlpha(50), width: 1),
+        ),
+        disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.black.withAlpha(50), width: 1),
         ),

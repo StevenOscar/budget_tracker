@@ -365,25 +365,26 @@ class _AddScreenState extends State<AddScreen> {
                               time: timeValue,
                             ),
                           );
-                          widget.loadTransaction();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: AppColor.mainGreen,
-                              content: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Center(
-                                  child: Text(
-                                    "Transaction saved",
-                                    style: AppTextStyles.body1(
-                                      fontweight: FontWeight.w500,
-                                      color: Colors.white,
+                          widget.loadTransaction().then((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: AppColor.mainGreen,
+                                content: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Center(
+                                    child: Text(
+                                      "Transaction saved",
+                                      style: AppTextStyles.body1(
+                                        fontweight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                          Navigator.pop(context);
+                            );
+                            Navigator.pop(context);
+                          },);
                         }
                         : null,
                 child: Text(

@@ -1,4 +1,5 @@
 import 'package:budget_tracker/models/transaction_model.dart';
+import 'package:budget_tracker/screens/detail_screen.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/utils/date_formatter.dart';
@@ -392,7 +393,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => DetailScreen(
+                                loadTransaction: widget.loadTransaction,
+                                transaction: widget.transactionList[index],
+                              ),
+                        ),
+                      );
+                    },
                     child: CardWidget(
                       transaction: widget.transactionList[index],
                     ),
