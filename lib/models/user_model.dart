@@ -7,7 +7,7 @@ class UserModel {
   String username;
   String? password;
   String phoneNumber;
-  int monthlyBudget;
+  int monthlyExpense;
 
   UserModel({
     this.id,
@@ -15,7 +15,7 @@ class UserModel {
     required this.username,
     this.password,
     required this.phoneNumber,
-    required this.monthlyBudget,
+    required this.monthlyExpense,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +24,7 @@ class UserModel {
       'username': username,
       'password': password,
       'phone_number': phoneNumber,
-      'monthly_budget': monthlyBudget,
+      'monthly_expense': monthlyExpense,
     };
   }
 
@@ -34,7 +34,7 @@ class UserModel {
       name: map['name'] as String,
       username: map['username'] as String,
       phoneNumber: map['phone_number'] as String,
-      monthlyBudget: map['monthly_budget'] as int,
+      monthlyExpense: map['monthly_expense'] as int,
     );
   }
 

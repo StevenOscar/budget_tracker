@@ -2,11 +2,11 @@ import 'package:budget_tracker/models/category_model.dart';
 import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/date_formatter.dart';
 import 'package:budget_tracker/utils/db_helper.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 class AddScreen extends StatefulWidget {
   static const String id = "/add";
@@ -91,10 +91,7 @@ class _AddScreenState extends State<AddScreen> {
                               ),
                               SizedBox(width: 8),
                               Text(
-                                DateFormat(
-                                  "EEEE, d MMMM yyyy",
-                                  "EN_en",
-                                ).format(dateValue),
+                                DateFormatter.formatDayDateMonthYear(dateValue),
                                 style: AppTextStyles.body1(
                                   fontweight: FontWeight.w500,
                                   color: Colors.black,

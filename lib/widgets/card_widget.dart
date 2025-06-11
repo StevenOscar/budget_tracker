@@ -2,8 +2,8 @@ import 'package:budget_tracker/models/category_model.dart';
 import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class CardWidget extends StatelessWidget {
   final TransactionModel transaction;
@@ -34,7 +34,7 @@ class CardWidget extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          "${DateFormat('d MMMM yyyy').format(transaction.date)} ${transaction.time.hour.toString()}:${transaction.time.minute.toString().padLeft(2, '0')}",
+          "${DateFormatter.formatDateMonthYear(transaction.date)} ${transaction.time.hour.toString()}:${transaction.time.minute.toString().padLeft(2, '0')}",
           style: AppTextStyles.body2(fontweight: FontWeight.w400),
         ),
         trailing: Text(
@@ -43,7 +43,7 @@ class CardWidget extends StatelessWidget {
               : "+ Rp.${transaction.amount}",
           style: AppTextStyles.body2(
             fontweight: FontWeight.w800,
-            color: transaction.type == 0 ? Colors.red : Colors.green,
+            color: transaction.type == 0 ? Colors.red : AppColor.mainGreen,
           ),
         ),
       ),

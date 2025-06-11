@@ -19,7 +19,7 @@ class DbHelper {
             username TEXT,
             password TEXT,
             phone_number TEXT,
-            monthly_budget INTEGER
+            monthly_expense INTEGER
           )
         ''');
         batch.execute('''
@@ -99,18 +99,14 @@ class DbHelper {
     }
   }
 
-  static Future<UserModel?> updateUserBudget({required String username}) async {
+  static Future<void> updateUserTarget({required String username, required int target}) async {
     Database database = await _db();
-    List<Map<String, dynamic>> data = await database.query(
+    await database.update(
       userTable,
+      {'monthly_expense': target},
       where: "username = ?",
       whereArgs: [username],
     );
-    if (data.isNotEmpty) {
-      return UserModel.fromMap(data.first);
-    } else {
-      return null;
-    }
   }
 
   static Future<void> insertTransactionData({
@@ -153,7 +149,6 @@ class DbHelper {
       where: "user_id = ?",
       whereArgs: [userId],
     );
-    print(data);
     return data.map((e) => TransactionModel.fromMap(e)).toList();
   }
 }

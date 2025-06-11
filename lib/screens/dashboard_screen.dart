@@ -1,13 +1,19 @@
 import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/date_formatter.dart';
+import 'package:budget_tracker/utils/db_helper.dart';
+import 'package:budget_tracker/utils/preference_helper.dart';
 import 'package:budget_tracker/widgets/card_widget.dart';
+import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 class DashboardScreen extends StatefulWidget {
   final List<TransactionModel> transactionList;
+  final int expenseTarget;
   final Future<void> Function() loadTransaction;
+  final Future<void> Function() loadUser;
   final void Function(int) changePage;
   final int balance;
   final int expense;
@@ -20,6 +26,8 @@ class DashboardScreen extends StatefulWidget {
     required this.balance,
     required this.expense,
     required this.income,
+    required this.loadUser,
+    required this.expenseTarget,
   });
 
   @override
@@ -27,7 +35,75 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  void updateBudget() {}
+  void updateExpenseTarget() {
+    final TextEditingController targetController = TextEditingController();
+    bool isTargetValid = false;
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder:
+          (context) => PopScope(
+            canPop: false,
+            child: StatefulBuilder(
+              builder: (BuildContext context, setState) {
+                return AlertDialog(
+                  content: Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: TextFormFieldWidget(
+                      controller: targetController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      hintText: "Target Expense",
+                      onChanged: (value) {
+                        setState(() {
+                          if (value.isEmpty || value.length > 12) {
+                            isTargetValid = false;
+                          } else {
+                            isTargetValid = true;
+                          }
+                        });
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Target can't be empty ";
+                        } else if (value.length > 15) {
+                          return "Target is too much";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed:
+                          isTargetValid
+                              ? () async {
+                                String username =
+                                    await PreferenceHandler.getUsername();
+                                await DbHelper.updateUserTarget(
+                                  username: username,
+                                  target: int.parse(targetController.text),
+                                );
+                                widget.loadUser();
+                                Navigator.pop(context);
+                              }
+                              : null,
+                      child: Text("Set"),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -49,14 +125,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat("MMMM yyyy").format(DateTime.now()).toString(),
+                      DateFormatter.formatMonthYear(DateTime.now()),
                       style: AppTextStyles.body2(
                         fontweight: FontWeight.w800,
                         color: Colors.black,
                       ),
                     ),
                     Text(
-                      "${DateFormat("d MMMM yy").format(DateTime(DateTime.now().year, DateTime.now().month, 1)).toString()} - ${DateFormat("d MMMM yy").format(DateTime(DateTime.now().year, DateTime.now().month + 1, 0)).toString()}",
+                      "${DateFormatter.formatDateMonthYear(DateTime(DateTime.now().year, DateTime.now().month, 1))} - ${DateFormatter.formatDateMonthYear(DateTime(DateTime.now().year, DateTime.now().month + 1, 0)).toString()}",
                       style: AppTextStyles.body3(
                         fontweight: FontWeight.w500,
                         color: Colors.black,
@@ -189,30 +265,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Budget target this month",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Edit",
-                            style: AppTextStyles.body2(
-                              fontweight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
+                  GestureDetector(
+                    onTap: updateExpenseTarget,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Expense target this month",
+                          style: AppTextStyles.body2(
+                            fontweight: FontWeight.w500,
+                            color: Colors.black,
                           ),
-                          SizedBox(width: 4),
-                          Icon(Icons.arrow_forward_ios_sharp, size: 18),
-                        ],
-                      ),
-                    ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Edit",
+                              style: AppTextStyles.body2(
+                                fontweight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward_ios_sharp, size: 18),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 12),
                   Row(
@@ -227,7 +306,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          " / Rp. ",
+                          " / Rp. ${widget.expenseTarget}",
                           style: AppTextStyles.body1(
                             fontweight: FontWeight.w400,
                             color: Colors.black,
@@ -254,12 +333,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               height: 20,
                               width:
                                   widget.expense /
-                                  2000000 *
+                                  widget.expenseTarget *
                                   constraints.maxWidth,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color:
-                                    widget.expense / 2000000 <= 0.3
+                                    widget.expense / widget.expenseTarget <= 0.3
                                         ? Color(0xff8cb85c)
                                         : widget.expense / 2000000 <= 0.8
                                         ? Colors.orange
@@ -280,7 +359,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Transaction History",
+                    "Recent Transaction",
                     style: AppTextStyles.heading4(fontweight: FontWeight.w800),
                   ),
                   GestureDetector(
@@ -302,14 +381,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             SizedBox(height: 12),
             ListView.builder(
-              itemCount: widget.transactionList.length,
+              itemCount:
+                  widget.transactionList.length < 10
+                      ? widget.transactionList.length
+                      : 10,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: CardWidget(transaction: widget.transactionList[index]),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: CardWidget(
+                      transaction: widget.transactionList[index],
+                    ),
+                  ),
                 );
               },
             ),

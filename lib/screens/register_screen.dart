@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           username: usernameController.text,
           password: passwordController.text,
           phoneNumber: phoneController.text,
-          monthlyBudget: 2000000,
+          monthlyExpense: 2000000,
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(

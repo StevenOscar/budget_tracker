@@ -21,6 +21,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   List<TransactionModel> transactionList = [];
   List<Widget> screenList = [];
+  UserModel? userData;
   int currentPage = 0;
   int balance = 0;
   int expense = 0;
@@ -28,6 +29,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
+    userData = widget.userData;
     loadTransaction();
     super.initState();
   }
@@ -36,7 +38,11 @@ class _MainScreenState extends State<MainScreen> {
     final data = await DbHelper.getTransactionData(userId: widget.userData.id!);
     setState(() {
       if (data.isNotEmpty) {
+        balance = 0;
+        expense = 0;
+        income = 0;
         transactionList = data;
+        transactionList.sort((a, b) => b.date.compareTo(a.date));
         for (int i = 0; i < transactionList.length; i++) {
           if (transactionList[i].type == 0) {
             balance -= transactionList[i].amount;
@@ -55,6 +61,17 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  Future<void> loadUser() async {
+    final data = await DbHelper.getUserData(username: widget.userData.username);
+    setState(() {
+      if (data != null) {
+        userData = data;
+      } else {
+        userData = null;
+      }
+    });
+  }
+
   void changePage(int index) {
     setState(() {
       currentPage = index;
@@ -69,14 +86,16 @@ class _MainScreenState extends State<MainScreen> {
         balance: balance,
         expense: expense,
         income: income,
+        expenseTarget: userData!.monthlyExpense,
         loadTransaction: loadTransaction,
         changePage: changePage,
+        loadUser: loadUser,
       ),
       TransactionHistoryScreen(
         transactionList: transactionList,
         loadTransaction: loadTransaction,
       ),
-      ProfileScreen(userData: widget.userData),
+      ProfileScreen(userData: userData!),
     ];
     return Scaffold(
       backgroundColor: currentPage != 2 ? Colors.white : AppColor.mainGreen,
