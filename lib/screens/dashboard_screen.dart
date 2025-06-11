@@ -1,16 +1,33 @@
+import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final List<TransactionModel> transactionList;
+  final Future<void> Function() loadTransaction;
+  final void Function(int) changePage;
+  final int balance;
+  final int expense;
+  final int income;
+  const DashboardScreen({
+    super.key,
+    required this.transactionList,
+    required this.loadTransaction,
+    required this.changePage,
+    required this.balance,
+    required this.expense,
+    required this.income,
+  });
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  void updateBudget() {}
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -32,14 +49,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "June 2024",
+                      DateFormat("MMMM yyyy").format(DateTime.now()).toString(),
                       style: AppTextStyles.body2(
                         fontweight: FontWeight.w800,
                         color: Colors.black,
                       ),
                     ),
                     Text(
-                      "01 June 25 - 31 June 25",
+                      "${DateFormat("d MMMM yy").format(DateTime(DateTime.now().year, DateTime.now().month, 1)).toString()} - ${DateFormat("d MMMM yy").format(DateTime(DateTime.now().year, DateTime.now().month + 1, 0)).toString()}",
                       style: AppTextStyles.body3(
                         fontweight: FontWeight.w500,
                         color: Colors.black,
@@ -53,7 +70,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: AppColor.mainGreen,
+                color:
+                    widget.balance >= 0
+                        ? AppColor.mainGreen
+                        : Colors.red.shade600,
               ),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
@@ -74,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "Rp. 1.000.000",
+                      "Rp. ${widget.balance.toString()}",
                       style: AppTextStyles.heading3(
                         fontweight: FontWeight.w800,
                         color: Colors.white,
@@ -97,24 +117,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                       SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Expense",
-                            style: AppTextStyles.body3(
-                              fontweight: FontWeight.w500,
-                              color: Colors.white,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Expense",
+                              style: AppTextStyles.body3(
+                                fontweight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Rp. 500.000",
-                            style: AppTextStyles.body2(
-                              fontweight: FontWeight.w800,
-                              color: Colors.white,
+                            Text(
+                              "Rp. ${widget.expense}",
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.body2(
+                                fontweight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       SizedBox(width: 20),
                       Container(
@@ -129,24 +152,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                       SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Income",
-                            style: AppTextStyles.body3(
-                              fontweight: FontWeight.w500,
-                              color: Colors.white,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Income",
+                              style: AppTextStyles.body3(
+                                fontweight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Rp. 2.000.000",
-                            style: AppTextStyles.body2(
-                              fontweight: FontWeight.w800,
-                              color: Colors.white,
+                            Text(
+                              "Rp. ${widget.income}",
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.body2(
+                                fontweight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -191,19 +217,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          "Rp. 1.000.000.000",
-                          style: AppTextStyles.body1(
-                            fontweight: FontWeight.w800,
-                            color: Colors.black,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        "Rp. ${widget.expense}",
+                        style: AppTextStyles.body1(
+                          fontweight: FontWeight.w800,
+                          color: Colors.black,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Expanded(
                         child: Text(
-                          " / Rp. 2.000.000.000",
+                          " / Rp. ",
                           style: AppTextStyles.body1(
                             fontweight: FontWeight.w400,
                             color: Colors.black,
@@ -228,13 +252,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder:
                             (context, constraints) => Container(
                               height: 20,
-                              width: 1000000 / 2000000 * constraints.maxWidth,
+                              width:
+                                  widget.expense /
+                                  2000000 *
+                                  constraints.maxWidth,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color:
-                                    1000000 / 2000000 <= 0.3
+                                    widget.expense / 2000000 <= 0.3
                                         ? Color(0xff8cb85c)
-                                        : 1000000 / 2000000 <= 0.8
+                                        : widget.expense / 2000000 <= 0.8
                                         ? Colors.orange
                                         : Colors.red.shade400,
                               ),
@@ -257,7 +284,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: AppTextStyles.heading4(fontweight: FontWeight.w800),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        widget.changePage(1);
+                      });
+                    },
                     child: Text(
                       "View All",
                       style: AppTextStyles.body2(
@@ -271,14 +302,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             SizedBox(height: 12),
             ListView.builder(
-              itemCount: 10,
+              itemCount: widget.transactionList.length,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: CardWidget(index: index),
+                  child: CardWidget(transaction: widget.transactionList[index]),
                 );
               },
             ),

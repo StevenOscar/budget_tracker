@@ -1,4 +1,3 @@
-import 'package:budget_tracker/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CategoryModel {

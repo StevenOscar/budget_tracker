@@ -1,7 +1,11 @@
+import 'package:budget_tracker/constants/assets_images.dart';
+import 'package:budget_tracker/models/user_model.dart';
 import 'package:budget_tracker/screens/main_screen.dart';
 import 'package:budget_tracker/screens/register_screen.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/db_helper.dart';
+import 'package:budget_tracker/utils/preference_helper.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +20,89 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  void _login() async {
+    bool login = await DbHelper.authenticateUser(
+      username: usernameController.text,
+      password: passwordController.text,
+    );
+    if (login) {
+      PreferenceHandler.setLogin(true);
+      PreferenceHandler.setUsername(usernameController.text);
+      UserModel? userData = await DbHelper.getUserData(
+        username: usernameController.text,
+      );
+      if (userData != null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainScreen(userData: userData),
+          ),
+          (route) => false,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColor.mainGreen,
+            content: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Center(
+                child: Text(
+                  "Welcome, ${userData.name}",
+                  style: AppTextStyles.body1(
+                    fontweight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      } else {
+        PreferenceHandler.setLogin(false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Center(
+                child: Text(
+                  "User data is empty",
+                  style: AppTextStyles.body1(
+                    fontweight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Center(
+              child: Text(
+                "User doesn't exist",
+                style: AppTextStyles.body1(
+                  fontweight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isUsernameValid = false;
+  bool isPasswordValid = false;
   bool isPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,11 +128,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: const EdgeInsets.all(24),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 40),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Image.asset(AssetsImages.appLogoCropped, width: 140),
                     Text(
                       "Welcome Back",
                       style: AppTextStyles.heading2(
@@ -56,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColor.mainGreen,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 4),
                     Text(
                       "Login to access your account",
                       style: AppTextStyles.body2(
@@ -70,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         "Username",
                         style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
+                          fontweight: FontWeight.w500,
                           color: Colors.black,
                         ),
                       ),
@@ -78,16 +163,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 8),
                     TextFormFieldWidget(
                       hintText: "Username",
+                      validator: (value) {
+                        if (value == null || value == "") {
+                          return "Username can't be empty";
+                        } else if (value.length > 12) {
+                          return "Username can't be longer than 12 characte";
+                        } else {
+                          return null;
+                        }
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          if (value.isEmpty || value.length > 12) {
+                            isUsernameValid = false;
+                          } else {
+                            isUsernameValid = true;
+                          }
+                        });
+                      },
                       controller: usernameController,
-                      keyboardType: TextInputType.emailAddress,
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: isUsernameValid ? 35 : 12),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Password",
                         style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
+                          fontweight: FontWeight.w500,
                           color: Colors.black,
                         ),
                       ),
@@ -97,8 +199,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: "Password",
                       controller: passwordController,
                       obscureText: !isPasswordVisible,
+                      validator: (value) {
+                        if (value == null || value == "") {
+                          isPasswordValid = false;
+                          return "Password can't be empty";
+                        } else {
+                          isPasswordValid = true;
+                          return null;
+                        }
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          if (value.isEmpty) {
+                            isPasswordValid = false;
+                          } else {
+                            isPasswordValid = true;
+                          }
+                        });
+                      },
                       suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.only(right: 8, top: 4),
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
@@ -120,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 32),
+                    SizedBox(height: isPasswordValid ? 40 : 17),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -131,15 +251,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            MainScreen.id,
-                            (route) => false,
-                          );
-                        },
+                        onPressed:
+                            isUsernameValid && isPasswordValid ? _login : null,
                         child: Text(
-                          "Submit",
+                          "Login",
                           style: AppTextStyles.body1(
                             fontweight: FontWeight.w600,
                             color: Colors.white,
@@ -161,6 +276,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             recognizer:
                                 TapGestureRecognizer()
                                   ..onTap = () {
+                                    usernameController.clear();
+                                    passwordController.clear();
                                     Navigator.pushNamed(
                                       context,
                                       RegisterScreen.id,

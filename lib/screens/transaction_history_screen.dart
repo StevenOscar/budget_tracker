@@ -1,4 +1,5 @@
 import 'package:budget_tracker/models/category_model.dart';
+import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/widgets/card_widget.dart';
@@ -7,7 +8,14 @@ import 'package:intl/intl.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   static String id = "/history";
-  const TransactionHistoryScreen({super.key});
+  final List<TransactionModel> transactionList;
+  final Future<void> Function() loadTransaction;
+
+  const TransactionHistoryScreen({
+    super.key,
+    required this.transactionList,
+    required this.loadTransaction,
+  });
 
   @override
   State<TransactionHistoryScreen> createState() =>
@@ -118,7 +126,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -309,9 +317,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: 10,
+                itemCount: widget.transactionList.length,
                 itemBuilder: (context, index) {
-                  return CardWidget(index: index);
+                  return CardWidget(transaction: widget.transactionList[index]);
                 },
               ),
             ],

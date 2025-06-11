@@ -1,9 +1,14 @@
+import 'package:budget_tracker/models/user_model.dart';
+import 'package:budget_tracker/screens/login_screen.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/preference_helper.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final UserModel userData;
+
+  const ProfileScreen({super.key, required this.userData});
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +41,42 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(backgroundColor: AppColor.mainGreen),
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: AppColor.mainGreen,
+                    child: CircleAvatar(
+                      radius: 29,
+                      backgroundColor: AppColor.mainGreen40,
+                      child: Text(
+                        userData.name[0],
+                        style: AppTextStyles.heading3(
+                          fontweight: FontWeight.w600,
+                          color: AppColor.mainGreen,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(width: 16),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "User asdfghjkll;",
+                        userData.name,
                         style: AppTextStyles.body1(
                           fontweight: FontWeight.w600,
                           color: Colors.black,
                         ),
                       ),
                       Text(
-                        "Username : sanoasdas",
+                        "Username : ${userData.username}",
+                        style: AppTextStyles.body2(
+                          fontweight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      Text(
+                        "Phone : ${userData.phoneNumber}",
                         style: AppTextStyles.body2(
                           fontweight: FontWeight.w600,
                           color: Colors.grey.shade700,
@@ -71,7 +97,15 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    PreferenceHandler.deleteUsername();
+                    PreferenceHandler.deleteLogin();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      LoginScreen.id,
+                      (route) => false,
+                    );
+                  },
                   child: Text(
                     "Log out",
                     style: AppTextStyles.body1(

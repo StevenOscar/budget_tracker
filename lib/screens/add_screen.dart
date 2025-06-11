@@ -1,14 +1,22 @@
 import 'package:budget_tracker/models/category_model.dart';
+import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
+import 'package:budget_tracker/utils/db_helper.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class AddScreen extends StatefulWidget {
   static const String id = "/add";
-  const AddScreen({super.key});
+  final Future<void> Function() loadTransaction;
+  final int userId;
+  const AddScreen({
+    super.key,
+    required this.userId,
+    required this.loadTransaction,
+  });
 
   @override
   State<AddScreen> createState() => _AddScreenState();
@@ -20,6 +28,7 @@ class _AddScreenState extends State<AddScreen> {
   DateTime dateValue = DateTime.now();
   TimeOfDay timeValue = TimeOfDay.now();
   final TextEditingController amountController = TextEditingController();
+  bool isAmountValid = false;
   final TextEditingController notesController = TextEditingController();
 
   @override
@@ -125,8 +134,8 @@ class _AddScreenState extends State<AddScreen> {
                                       await showDatePicker(
                                         context: context,
                                         initialDate: dateValue,
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2100),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime.now(),
                                       );
                                   if (selectedDate != null) {
                                     setState(() {
@@ -233,6 +242,23 @@ class _AddScreenState extends State<AddScreen> {
                   ),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  if (value.isEmpty || value.length > 12) {
+                    isAmountValid = false;
+                  } else {
+                    isAmountValid = true;
+                  }
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Amount can't be empty ";
+                } else if (value.length > 12) {
+                  return "Amount can't be higher than 12 digit";
+                }
+                return null;
+              },
               contentPadding: EdgeInsets.only(
                 left: 16,
                 right: 16,
@@ -240,20 +266,19 @@ class _AddScreenState extends State<AddScreen> {
                 bottom: 16,
               ),
               inputFormatters: [
-                CurrencyInputFormatter(
-                  thousandSeparator: ThousandSeparator.Period,
-                  mantissaLength: 0,
-                  trailingSymbol: "",
+                FilteringTextInputFormatter.deny(
+                  RegExp(r'[+!@#$%^&*(),.?":{}|<>]]'),
                 ),
+                FilteringTextInputFormatter.deny(RegExp(r'[a-zA-Z]')),
               ],
               hintText: "Amount",
             ),
-            SizedBox(height: 12),
+            SizedBox(height: isAmountValid ? 35 : 12),
             TextFormFieldWidget(
               controller: notesController,
               maxlines: 3,
               prefixIcon: Icon(Icons.note, size: 25, color: AppColor.mainGreen),
-              hintText: "Note",
+              hintText: "Note (Optional)",
             ),
             SizedBox(height: 12),
             Container(
@@ -329,7 +354,41 @@ class _AddScreenState extends State<AddScreen> {
                     borderRadius: BorderRadius.circular(18),
                   ),
                 ),
-                onPressed: () {},
+                onPressed:
+                    isAmountValid
+                        ? () async {
+                          await DbHelper.insertTransactionData(
+                            data: TransactionModel(
+                              userId: widget.userId,
+                              amount: int.parse(amountController.text),
+                              note: notesController.text,
+                              type: transactionType,
+                              category: selectedCategory,
+                              date: dateValue,
+                              time: timeValue,
+                            ),
+                          );
+                          widget.loadTransaction();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColor.mainGreen,
+                              content: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Center(
+                                  child: Text(
+                                    "Transaction saved",
+                                    style: AppTextStyles.body1(
+                                      fontweight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        }
+                        : null,
                 child: Text(
                   "Submit",
                   style: AppTextStyles.body1(
