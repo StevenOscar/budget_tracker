@@ -19,6 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  VoidCallback? resetTransactionFilter;
   List<TransactionModel> transactionList = [];
   List<Widget> screenList = [];
   UserModel? userData;
@@ -75,6 +76,9 @@ class _MainScreenState extends State<MainScreen> {
   void changePage(int index) {
     setState(() {
       currentPage = index;
+      if (currentPage == 1 && index != 1) {
+        resetTransactionFilter?.call();
+      }
     });
   }
 
@@ -94,11 +98,20 @@ class _MainScreenState extends State<MainScreen> {
       TransactionHistoryScreen(
         transactionList: transactionList,
         loadTransaction: loadTransaction,
+        userData: widget.userData,
       ),
       ProfileScreen(userData: userData!),
     ];
     return Scaffold(
       backgroundColor: currentPage != 2 ? Colors.white : AppColor.mainGreen,
+      drawer: Drawer(
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+
+          }, child: Text("Dummy")),
+        ),
+      ),
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(40),

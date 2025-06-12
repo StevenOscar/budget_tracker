@@ -3,6 +3,7 @@ import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/utils/date_formatter.dart';
+import 'package:budget_tracker/utils/money_formatter.dart';
 import 'package:flutter/material.dart';
 
 class CardWidget extends StatelessWidget {
@@ -39,8 +40,8 @@ class CardWidget extends StatelessWidget {
         ),
         trailing: Text(
           transaction.type == 0
-              ? "- Rp.${transaction.amount}"
-              : "+ Rp.${transaction.amount}",
+              ? "- Rp.${MoneyFormatter.format(transaction.amount)}"
+              : "+ Rp.${MoneyFormatter.format(transaction.amount)}",
           style: AppTextStyles.body2(
             fontweight: FontWeight.w800,
             color: transaction.type == 0 ? Colors.red : AppColor.mainGreen,

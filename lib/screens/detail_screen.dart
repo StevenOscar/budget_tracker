@@ -80,7 +80,15 @@ class _DetailScreenState extends State<DetailScreen> {
                 isEdit = !isEdit;
               });
             },
-            icon: Icon(isEdit ? Icons.cancel : Icons.edit),
+            icon: CircleAvatar(
+              radius: 18,
+              backgroundColor: AppColor.mainGreen40,
+              child: Icon(
+                isEdit ? Icons.cancel : Icons.edit,
+                size: 23,
+                color: AppColor.mainGreen,
+              ),
+            ),
           ),
           IconButton(
             onPressed: () {
@@ -88,8 +96,23 @@ class _DetailScreenState extends State<DetailScreen> {
                 context: context,
                 builder:
                     (_) => AlertDialog(
-                      title: Text("Delete Data"),
-                      content: Text("Are you sure want to delete this data?"),
+                      title: Center(
+                        child: Text(
+                          "Delete Data",
+                          style: AppTextStyles.heading2(
+                            fontweight: FontWeight.w700,
+                            color: AppColor.mainGreen,
+                          ),
+                        ),
+                      ),
+                      content: Text(
+                        "Are you sure want to delete this data?",
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.body1(
+                          fontweight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -107,17 +130,22 @@ class _DetailScreenState extends State<DetailScreen> {
                               Navigator.pop(context);
                             });
                           },
-                          child: Text("Set"),
+                          child: Text("Delete"),
                         ),
                       ],
                     ),
               );
             },
-            icon: Icon(Icons.delete),
+            icon: CircleAvatar(
+              radius: 18,
+              backgroundColor: AppColor.mainGreen40,
+              child: Icon(Icons.delete, size: 23, color: AppColor.mainGreen),
+            ),
           ),
+          SizedBox(width: 8),
         ],
         title: Text(
-          "Detail Transaction",
+          "${isEdit ? "Edit" : "Detail"} Transaction",
           style: AppTextStyles.heading3(
             fontweight: FontWeight.w700,
             color: AppColor.mainGreen,
@@ -445,10 +473,10 @@ class _DetailScreenState extends State<DetailScreen> {
                                 SnackBar(
                                   backgroundColor: AppColor.mainGreen,
                                   content: Padding(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: const EdgeInsets.all(8),
                                     child: Center(
                                       child: Text(
-                                        "Transaction edited",
+                                        "Transaction Edited",
                                         style: AppTextStyles.body1(
                                           fontweight: FontWeight.w500,
                                           color: Colors.white,

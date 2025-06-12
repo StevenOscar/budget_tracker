@@ -4,6 +4,7 @@ import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/utils/date_formatter.dart';
 import 'package:budget_tracker/utils/db_helper.dart';
+import 'package:budget_tracker/utils/money_formatter.dart';
 import 'package:budget_tracker/utils/preference_helper.dart';
 import 'package:budget_tracker/widgets/card_widget.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
@@ -171,7 +172,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "Rp. ${widget.balance.toString()}",
+                      "Rp. ${MoneyFormatter.format(widget.balance)}",
                       style: AppTextStyles.heading3(
                         fontweight: FontWeight.w800,
                         color: Colors.white,
@@ -206,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
                             Text(
-                              "Rp. ${widget.expense}",
+                              "Rp. ${MoneyFormatter.format(widget.expense)}",
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.body2(
                                 fontweight: FontWeight.w800,
@@ -241,7 +242,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
                             Text(
-                              "Rp. ${widget.income}",
+                              "Rp. ${MoneyFormatter.format(widget.income)}",
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.body2(
                                 fontweight: FontWeight.w800,
@@ -298,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     children: [
                       Text(
-                        "Rp. ${widget.expense}",
+                        "Rp. ${MoneyFormatter.format(widget.expense)}",
                         style: AppTextStyles.body1(
                           fontweight: FontWeight.w800,
                           color: Colors.black,
@@ -307,7 +308,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          " / Rp. ${widget.expenseTarget}",
+                          " / Rp. ${MoneyFormatter.format(widget.expenseTarget)}",
                           style: AppTextStyles.body1(
                             fontweight: FontWeight.w400,
                             color: Colors.black,
@@ -341,7 +342,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 color:
                                     widget.expense / widget.expenseTarget <= 0.3
                                         ? Color(0xff8cb85c)
-                                        : widget.expense / 2000000 <= 0.8
+                                        : widget.expense /
+                                                widget.expenseTarget <=
+                                            0.8
                                         ? Colors.orange
                                         : Colors.red.shade400,
                               ),
@@ -383,9 +386,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SizedBox(height: 12),
             ListView.builder(
               itemCount:
-                  widget.transactionList.length < 10
+                  widget.transactionList.length < 5
                       ? widget.transactionList.length
-                      : 10,
+                      : 5,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: EdgeInsets.zero,
