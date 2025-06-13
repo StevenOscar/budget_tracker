@@ -26,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   int currentPage = 0;
   int balance = 0;
   int expense = 0;
+  int totalMonthlyExpense = 0;
   int income = 0;
 
   @override
@@ -42,12 +43,29 @@ class _MainScreenState extends State<MainScreen> {
         balance = 0;
         expense = 0;
         income = 0;
+        totalMonthlyExpense = 0;
         transactionList = data;
         transactionList.sort((a, b) => b.date.compareTo(a.date));
         for (int i = 0; i < transactionList.length; i++) {
           if (transactionList[i].type == 0) {
             balance -= transactionList[i].amount;
             expense += transactionList[i].amount;
+            if (transactionList[i].date.isAfter(
+                  DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    1,
+                  ).subtract(Duration(days: 1)),
+                ) &&
+                transactionList[i].date.isBefore(
+                  DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month + 1,
+                    0,
+                  ).add(Duration(days: 1)),
+                )) {
+              totalMonthlyExpense += transactionList[i].amount;
+            }
           } else {
             balance += transactionList[i].amount;
             income += transactionList[i].amount;
@@ -56,6 +74,7 @@ class _MainScreenState extends State<MainScreen> {
       } else {
         transactionList = [];
         balance = 0;
+        totalMonthlyExpense = 0;
         expense = 0;
         income = 0;
       }
@@ -91,6 +110,7 @@ class _MainScreenState extends State<MainScreen> {
         expense: expense,
         income: income,
         expenseTarget: userData!.monthlyExpense,
+        totalMonthlyExpense: totalMonthlyExpense,
         loadTransaction: loadTransaction,
         changePage: changePage,
         loadUser: loadUser,
@@ -104,14 +124,6 @@ class _MainScreenState extends State<MainScreen> {
     ];
     return Scaffold(
       backgroundColor: currentPage != 2 ? Colors.white : AppColor.mainGreen,
-      drawer: Drawer(
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-
-          }, child: Text("Dummy")),
-        ),
-      ),
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(40),

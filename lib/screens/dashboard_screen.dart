@@ -19,6 +19,7 @@ class DashboardScreen extends StatefulWidget {
   final void Function(int) changePage;
   final int balance;
   final int expense;
+  final int totalMonthlyExpense;
   final int income;
   const DashboardScreen({
     super.key,
@@ -30,6 +31,7 @@ class DashboardScreen extends StatefulWidget {
     required this.income,
     required this.loadUser,
     required this.expenseTarget,
+    required this.totalMonthlyExpense,
   });
 
   @override
@@ -299,7 +301,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     children: [
                       Text(
-                        "Rp. ${MoneyFormatter.format(widget.expense)}",
+                        "Rp. ${MoneyFormatter.format(widget.totalMonthlyExpense)}",
                         style: AppTextStyles.body1(
                           fontweight: FontWeight.w800,
                           color: Colors.black,
