@@ -606,8 +606,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                           loadTransaction: loadTransaction,
                                         ),
                                   ),
-                                );
-                                await loadTransaction();
+                                ).then((value) async {
+                                  await loadTransaction();
+                                });
                               },
                               child: CardWidget(transaction: tx),
                             ),

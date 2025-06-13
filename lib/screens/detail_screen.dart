@@ -485,7 +485,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   ),
                                 ),
                               );
-                              Navigator.pop(context);
+                              Navigator.pop(context, true);
                             }
                             : null,
                     child: Text(
