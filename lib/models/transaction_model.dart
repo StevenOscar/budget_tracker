@@ -32,7 +32,7 @@ class TransactionModel {
       'type': type,
       'note': note,
       'category': category,
-      'date': date.toIso8601String(),
+      'date': DateTime(date.year,date.month,date.day,time.hour,time.minute).toIso8601String(),
       'time':
           '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
     };
