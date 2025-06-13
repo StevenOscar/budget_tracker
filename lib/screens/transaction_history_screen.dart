@@ -120,6 +120,17 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     });
   }
 
+  Future<void> loadTransaction() async {
+    await widget.loadTransaction();
+    filterList(
+      tempSelectedIncomeCategories: selectedIncomeCategories,
+      tempSelectedExpenseCategories: selectedExpenseCategories,
+      tempStartDate: startDate,
+      tempEndDate: endDate,
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -592,11 +603,11 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                     builder:
                                         (context) => DetailScreen(
                                           transaction: tx,
-                                          loadTransaction:
-                                              widget.loadTransaction,
+                                          loadTransaction: loadTransaction,
                                         ),
                                   ),
                                 );
+                                await loadTransaction();
                               },
                               child: CardWidget(transaction: tx),
                             ),

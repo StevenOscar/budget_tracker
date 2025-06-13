@@ -23,7 +23,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  // TODO Create Detail & Edit Screen
   bool isEdit = false;
   bool isAmountValid = true;
   late int transactionType;
@@ -468,7 +467,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   time: timeValue,
                                 ),
                               );
-                              widget.loadTransaction();
+                              await widget.loadTransaction();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   backgroundColor: AppColor.mainGreen,
