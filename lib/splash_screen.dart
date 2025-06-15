@@ -22,21 +22,15 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 2), () async {
       bool isLogin = await PreferenceHandler.getLogin();
       if (isLogin) {
-        String username = await PreferenceHandler.getUsername();
-        UserModel? userData = await DbHelper.getUserData(username: username);
+        int userId = await PreferenceHandler.getUserId();
+        UserModel? userData = await DbHelper.getUserData(userId: userId);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (context) => MainScreen(userData: userData!),
-          ),
+          MaterialPageRoute(builder: (context) => MainScreen(userData: userData!)),
           (route) => false,
         );
       } else {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          LoginScreen.id,
-          (route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, LoginScreen.id, (route) => false);
       }
     });
     super.initState();
@@ -48,23 +42,14 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColor.mainGreen,
       body: Center(
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(60),
-            color: Colors.white,
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(60), color: Colors.white),
           padding: EdgeInsets.only(left: 60, right: 60, top: 44, bottom: 36),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(AssetsImages.appLogoCropped, width: 180, height: 180),
               SizedBox(height: 16),
-              Text(
-                "Ka\$pot",
-                style: AppTextStyles.heading1(
-                  fontweight: FontWeight.w700,
-                  color: AppColor.mainGreen,
-                ),
-              ),
+              Text("Ka\$pot", style: AppTextStyles.heading1(fontweight: FontWeight.w700, color: AppColor.mainGreen)),
             ],
           ),
         ),

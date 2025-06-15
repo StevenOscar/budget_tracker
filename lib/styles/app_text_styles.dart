@@ -2,12 +2,7 @@ import 'package:budget_tracker/constants/assets_fonts.dart';
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
-  static TextStyle heading1({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle heading1({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 40,
@@ -17,12 +12,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle heading2({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle heading2({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 30,
@@ -32,12 +22,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle heading3({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle heading3({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 24,
@@ -47,12 +32,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle heading4({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle heading4({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 20,
@@ -62,12 +42,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle body1({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle body1({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 18,
@@ -77,12 +52,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle body2({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle body2({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 14,
@@ -92,12 +62,7 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle body3({
-    required FontWeight fontweight,
-    Color? color,
-    FontStyle? fontStyle,
-    double? fontSize,
-  }) {
+  static TextStyle body3({required FontWeight fontweight, Color? color, FontStyle? fontStyle, double? fontSize}) {
     return TextStyle(
       fontFamily: AssetsFonts.fontFamilyInter,
       fontSize: fontSize ?? 13,

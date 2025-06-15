@@ -1,5 +1,6 @@
 import 'package:budget_tracker/models/category_model.dart';
 import 'package:budget_tracker/models/transaction_model.dart';
+import 'package:budget_tracker/providers/transaction_provider.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/utils/date_formatter.dart';
@@ -7,16 +8,12 @@ import 'package:budget_tracker/utils/db_helper.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class AddScreen extends StatefulWidget {
   static const String id = "/add";
-  final Future<void> Function() loadTransaction;
   final int userId;
-  const AddScreen({
-    super.key,
-    required this.userId,
-    required this.loadTransaction,
-  });
+  const AddScreen({super.key, required this.userId});
 
   @override
   State<AddScreen> createState() => _AddScreenState();
@@ -33,6 +30,7 @@ class _AddScreenState extends State<AddScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider = context.read<TransactionProvider>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -48,20 +46,13 @@ class _AddScreenState extends State<AddScreen> {
             icon: CircleAvatar(
               radius: 20,
               backgroundColor: AppColor.mainGreen40,
-              child: Icon(
-                Icons.arrow_back,
-                size: 28,
-                color: AppColor.mainGreen,
-              ),
+              child: Icon(Icons.arrow_back, size: 28, color: AppColor.mainGreen),
             ),
           ),
         ),
         title: Text(
           "Add Transaction",
-          style: AppTextStyles.heading3(
-            fontweight: FontWeight.w700,
-            color: AppColor.mainGreen,
-          ),
+          style: AppTextStyles.heading3(fontweight: FontWeight.w700, color: AppColor.mainGreen),
         ),
       ),
       body: Padding(
@@ -72,10 +63,7 @@ class _AddScreenState extends State<AddScreen> {
               children: [
                 SizedBox(height: 8),
                 Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.mainGreen40,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  decoration: BoxDecoration(color: AppColor.mainGreen40, borderRadius: BorderRadius.circular(16)),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                   child: Column(
                     children: [
@@ -85,17 +73,11 @@ class _AddScreenState extends State<AddScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.calendar_month,
-                                color: AppColor.mainGreen,
-                              ),
+                              Icon(Icons.calendar_month, color: AppColor.mainGreen),
                               SizedBox(width: 8),
                               Text(
                                 DateFormatter.formatDayDateMonthYear(dateValue),
-                                style: AppTextStyles.body1(
-                                  fontweight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
+                                style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black),
                               ),
                             ],
                           ),
@@ -106,10 +88,7 @@ class _AddScreenState extends State<AddScreen> {
                               SizedBox(width: 8),
                               Text(
                                 "${timeValue.hour.toString()}:${timeValue.minute.toString().padLeft(2, '0')}",
-                                style: AppTextStyles.body1(
-                                  fontweight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
+                                style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black),
                               ),
                             ],
                           ),
@@ -123,17 +102,14 @@ class _AddScreenState extends State<AddScreen> {
                           children: [
                             Expanded(
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.mainGreen,
-                                ),
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColor.mainGreen),
                                 onPressed: () async {
-                                  final DateTime? selectedDate =
-                                      await showDatePicker(
-                                        context: context,
-                                        initialDate: dateValue,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime.now(),
-                                      );
+                                  final DateTime? selectedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: dateValue,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime.now(),
+                                  );
                                   if (selectedDate != null) {
                                     setState(() {
                                       dateValue = selectedDate;
@@ -142,25 +118,19 @@ class _AddScreenState extends State<AddScreen> {
                                 },
                                 child: Text(
                                   "Select Date",
-                                  style: AppTextStyles.body2(
-                                    fontweight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
+                                  style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.white),
                                 ),
                               ),
                             ),
                             SizedBox(width: 16),
                             Expanded(
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.mainGreen,
-                                ),
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColor.mainGreen),
                                 onPressed: () async {
-                                  final TimeOfDay? selectedTime =
-                                      await showTimePicker(
-                                        context: context,
-                                        initialTime: timeValue,
-                                      );
+                                  final TimeOfDay? selectedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime: timeValue,
+                                  );
                                   if (selectedTime != null) {
                                     setState(() {
                                       timeValue = selectedTime;
@@ -169,10 +139,7 @@ class _AddScreenState extends State<AddScreen> {
                                 },
                                 child: Text(
                                   "Select Time",
-                                  style: AppTextStyles.body2(
-                                    fontweight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
+                                  style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -198,13 +165,7 @@ class _AddScreenState extends State<AddScreen> {
                     });
                   },
                 ),
-                Text(
-                  "Expense",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
+                Text("Expense", style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black)),
                 SizedBox(width: 20),
                 Radio(
                   value: 1,
@@ -217,13 +178,7 @@ class _AddScreenState extends State<AddScreen> {
                     });
                   },
                 ),
-                Text(
-                  "Income",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
+                Text("Income", style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black)),
               ],
             ),
             SizedBox(height: 8),
@@ -233,10 +188,7 @@ class _AddScreenState extends State<AddScreen> {
                 padding: const EdgeInsets.only(left: 15, top: 14, bottom: 15),
                 child: Text(
                   "Rp.  ",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w700,
-                    color: AppColor.mainGreen,
-                  ),
+                  style: AppTextStyles.body1(fontweight: FontWeight.w700, color: AppColor.mainGreen),
                 ),
               ),
               onChanged: (value) {
@@ -256,16 +208,9 @@ class _AddScreenState extends State<AddScreen> {
                 }
                 return null;
               },
-              contentPadding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 20,
-                bottom: 16,
-              ),
+              contentPadding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
               inputFormatters: [
-                FilteringTextInputFormatter.deny(
-                  RegExp(r'[+!@#$%^&*(),.?":{}|<>]]'),
-                ),
+                FilteringTextInputFormatter.deny(RegExp(r'[+!@#$%^&*(),.?":{}|<>]]')),
                 FilteringTextInputFormatter.deny(RegExp(r'[a-zA-Z]')),
               ],
               hintText: "Amount",
@@ -303,12 +248,7 @@ class _AddScreenState extends State<AddScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(
-                                      e.category,
-                                      style: AppTextStyles.body1(
-                                        fontweight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    Text(e.category, style: AppTextStyles.body1(fontweight: FontWeight.w500)),
                                   ],
                                 ),
                               ),
@@ -322,12 +262,7 @@ class _AddScreenState extends State<AddScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(
-                                      e.category,
-                                      style: AppTextStyles.body1(
-                                        fontweight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    Text(e.category, style: AppTextStyles.body1(fontweight: FontWeight.w500)),
                                   ],
                                 ),
                               ),
@@ -347,9 +282,7 @@ class _AddScreenState extends State<AddScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.mainGreen,
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 ),
                 onPressed:
                     isAmountValid
@@ -365,7 +298,7 @@ class _AddScreenState extends State<AddScreen> {
                               time: timeValue,
                             ),
                           );
-                          widget.loadTransaction().then((_) {
+                          transactionProvider.loadTransaction().then((_) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 backgroundColor: AppColor.mainGreen,
@@ -374,26 +307,17 @@ class _AddScreenState extends State<AddScreen> {
                                   child: Center(
                                     child: Text(
                                       "Transaction saved",
-                                      style: AppTextStyles.body1(
-                                        fontweight: FontWeight.w500,
-                                        color: Colors.white,
-                                      ),
+                                      style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
                                     ),
                                   ),
                                 ),
                               ),
                             );
                             Navigator.pop(context);
-                          },);
+                          });
                         }
                         : null,
-                child: Text(
-                  "Submit",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+                child: Text("Submit", style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.white)),
               ),
             ),
           ],

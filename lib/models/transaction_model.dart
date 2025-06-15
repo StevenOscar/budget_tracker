@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
-import 'package:budget_tracker/utils/db_helper.dart';
 import 'package:flutter/material.dart';
 
 class TransactionModel {
@@ -32,9 +30,8 @@ class TransactionModel {
       'type': type,
       'note': note,
       'category': category,
-      'date': DateTime(date.year,date.month,date.day,time.hour,time.minute).toIso8601String(),
-      'time':
-          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+      'date': DateTime(date.year, date.month, date.day, time.hour, time.minute).toIso8601String(),
+      'time': '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
     };
   }
 
@@ -47,10 +44,7 @@ class TransactionModel {
       note: map['note'] as String,
       category: map['category'] as String,
       date: DateTime.parse(map['date']),
-      time: TimeOfDay(
-        hour: int.parse(map['time'].split(':')[0]),
-        minute: int.parse(map['time'].split(':')[1]),
-      ),
+      time: TimeOfDay(hour: int.parse(map['time'].split(':')[0]), minute: int.parse(map['time'].split(':')[1])),
     );
   }
 

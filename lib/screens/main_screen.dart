@@ -1,4 +1,3 @@
-import 'package:budget_tracker/models/transaction_model.dart';
 import 'package:budget_tracker/models/user_model.dart';
 import 'package:budget_tracker/screens/add_screen.dart';
 import 'package:budget_tracker/screens/dashboard_screen.dart';
@@ -19,70 +18,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  VoidCallback? resetTransactionFilter;
-  List<TransactionModel> transactionList = [];
   List<Widget> screenList = [];
   UserModel? userData;
   int currentPage = 0;
-  int balance = 0;
-  int expense = 0;
-  int totalMonthlyExpense = 0;
-  int income = 0;
 
   @override
   void initState() {
     userData = widget.userData;
-    loadTransaction();
     super.initState();
   }
 
-  Future<void> loadTransaction() async {
-    final data = await DbHelper.getTransactionData(userId: widget.userData.id!);
-    setState(() {
-      if (data.isNotEmpty) {
-        balance = 0;
-        expense = 0;
-        income = 0;
-        totalMonthlyExpense = 0;
-        transactionList = data;
-        transactionList.sort((a, b) => b.date.compareTo(a.date));
-        for (int i = 0; i < transactionList.length; i++) {
-          if (transactionList[i].type == 0) {
-            balance -= transactionList[i].amount;
-            expense += transactionList[i].amount;
-            if (transactionList[i].date.isAfter(
-                  DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    1,
-                  ).subtract(Duration(days: 1)),
-                ) &&
-                transactionList[i].date.isBefore(
-                  DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month + 1,
-                    0,
-                  ).add(Duration(days: 1)),
-                )) {
-              totalMonthlyExpense += transactionList[i].amount;
-            }
-          } else {
-            balance += transactionList[i].amount;
-            income += transactionList[i].amount;
-          }
-        }
-      } else {
-        transactionList = [];
-        balance = 0;
-        totalMonthlyExpense = 0;
-        expense = 0;
-        income = 0;
-      }
-    });
-  }
-
   Future<void> loadUser() async {
-    final data = await DbHelper.getUserData(username: widget.userData.username);
+    final data = await DbHelper.getUserData(userId: widget.userData.id!);
     setState(() {
       if (data != null) {
         userData = data;
@@ -95,40 +42,20 @@ class _MainScreenState extends State<MainScreen> {
   void changePage(int index) {
     setState(() {
       currentPage = index;
-      if (currentPage == 1 && index != 1) {
-        resetTransactionFilter?.call();
-      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     screenList = [
-      DashboardScreen(
-        transactionList: transactionList,
-        balance: balance,
-        expense: expense,
-        income: income,
-        expenseTarget: userData!.monthlyExpense,
-        totalMonthlyExpense: totalMonthlyExpense,
-        loadTransaction: loadTransaction,
-        changePage: changePage,
-        loadUser: loadUser,
-      ),
-      TransactionHistoryScreen(
-        transactionList: transactionList,
-        loadTransaction: loadTransaction,
-        userData: widget.userData,
-      ),
+      DashboardScreen(expenseTarget: userData!.monthlyExpense, changePage: changePage, loadUser: loadUser),
+      TransactionHistoryScreen(userData: widget.userData),
       ProfileScreen(userData: userData!),
     ];
     return Scaffold(
       backgroundColor: currentPage != 2 ? Colors.white : AppColor.mainGreen,
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
-        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
         child: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -142,29 +69,17 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined, size: 30),
               label: "",
-              activeIcon: Icon(
-                Icons.home_outlined,
-                color: AppColor.mainGreen,
-                size: 36,
-              ),
+              activeIcon: Icon(Icons.home_outlined, color: AppColor.mainGreen, size: 36),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.history_outlined, size: 30),
               label: "",
-              activeIcon: Icon(
-                Icons.history_outlined,
-                color: AppColor.mainGreen,
-                size: 36,
-              ),
+              activeIcon: Icon(Icons.history_outlined, color: AppColor.mainGreen, size: 36),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outlined, size: 30),
               label: "",
-              activeIcon: Icon(
-                Icons.person_outlined,
-                color: AppColor.mainGreen,
-                size: 36,
-              ),
+              activeIcon: Icon(Icons.person_outlined, color: AppColor.mainGreen, size: 36),
             ),
           ],
         ),
@@ -181,25 +96,13 @@ class _MainScreenState extends State<MainScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => AddScreen(
-                                userId: widget.userData.id!,
-                                loadTransaction: loadTransaction,
-                              ),
-                        ),
+                        MaterialPageRoute(builder: (context) => AddScreen(userId: widget.userData.id!)),
                       );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Add",
-                          style: AppTextStyles.body1(
-                            fontweight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
+                        Text("Add", style: AppTextStyles.body1(fontweight: FontWeight.w700, color: Colors.white)),
                         SizedBox(width: 4),
                         Icon(Icons.add_outlined, size: 30, color: Colors.white),
                       ],

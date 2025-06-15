@@ -27,9 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordVisible = false;
 
   void register() async {
-    bool isUserDuplicate = await DbHelper.checkUserDataAvailability(
-      username: usernameController.text,
-    );
+    bool isUserDuplicate = await DbHelper.checkUserDataAvailability(username: usernameController.text);
     if (isUserDuplicate) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -39,10 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Center(
               child: Text(
                 "User already exist",
-                style: AppTextStyles.body1(
-                  fontweight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
               ),
             ),
           ),
@@ -66,10 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Center(
               child: Text(
                 "User registered successfully",
-                style: AppTextStyles.body1(
-                  fontweight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
               ),
             ),
           ),
@@ -99,10 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Center(
             child: SingleChildScrollView(
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                 margin: const EdgeInsets.all(24),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                 child: Column(
@@ -111,29 +100,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       "Register",
-                      style: AppTextStyles.heading2(
-                        fontweight: FontWeight.w900,
-                        color: AppColor.mainGreen,
-                      ),
+                      style: AppTextStyles.heading2(fontweight: FontWeight.w900, color: AppColor.mainGreen),
                     ),
                     SizedBox(height: 8),
                     Text(
                       "Register your account",
-                      style: AppTextStyles.body2(
-                        fontweight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                     ),
                     SizedBox(height: 24),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Name",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
+                      child: Text("Name", style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black)),
                     ),
                     SizedBox(height: 8),
                     TextFormFieldWidget(
@@ -142,9 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Name can't be empty";
-                        } else if (RegExp(
-                          r'[0-9!@#$%^&*(),.?":{}|<>]',
-                        ).hasMatch(value)) {
+                        } else if (RegExp(r'[0-9!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
                           return "Name can't contain number or symbols";
                         } else {
                           return null;
@@ -152,11 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       onChanged: (value) {
                         setState(() {
-                          isNameValid =
-                              value.isNotEmpty &&
-                              !RegExp(
-                                r'[0-9!@#$%^&*(),.?":{}|<>]',
-                              ).hasMatch(value);
+                          isNameValid = value.isNotEmpty && !RegExp(r'[0-9!@#$%^&*(),.?":{}|<>]').hasMatch(value);
                         });
                       },
                     ),
@@ -165,10 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Username",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -199,10 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Password",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -238,16 +203,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           child:
                               isPasswordVisible
-                                  ? Icon(
-                                    Icons.visibility_outlined,
-                                    size: 24,
-                                    color: Colors.grey,
-                                  )
-                                  : Icon(
-                                    Icons.visibility_off_outlined,
-                                    size: 24,
-                                    color: Colors.grey,
-                                  ),
+                                  ? Icon(Icons.visibility_outlined, size: 24, color: Colors.grey)
+                                  : Icon(Icons.visibility_off_outlined, size: 24, color: Colors.grey),
                         ),
                       ),
                     ),
@@ -256,10 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Phone Number",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -268,9 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.phone,
                       controller: phoneController,
                       inputFormatters: [
-                        FilteringTextInputFormatter.deny(
-                          RegExp(r'[!@#$%^&*(),.?":{}|<>]]'),
-                        ),
+                        FilteringTextInputFormatter.deny(RegExp(r'[!@#$%^&*(),.?":{}|<>]]')),
                         FilteringTextInputFormatter.deny(RegExp(r'[a-zA-Z]')),
                       ],
                       validator: (value) {
@@ -287,8 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       onChanged: (value) {
                         setState(() {
-                          if (value.isEmpty ||
-                              value.contains(RegExp(r'[a-zA-Z]'))) {
+                          if (value.isEmpty || value.contains(RegExp(r'[a-zA-Z]'))) {
                             isPhoneValid = false;
                           } else {
                             isPhoneValid = true;
@@ -303,23 +254,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColor.mainGreen,
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        onPressed:
-                            isNameValid &&
-                                    isUsernameValid &&
-                                    isPasswordValid &&
-                                    isPhoneValid
-                                ? register
-                                : null,
+                        onPressed: isNameValid && isUsernameValid && isPasswordValid && isPhoneValid ? register : null,
                         child: Text(
                           "Register",
-                          style: AppTextStyles.body1(
-                            fontweight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.white),
                         ),
                       ),
                     ),
@@ -327,10 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text.rich(
                       TextSpan(
                         text: "Have an account? ",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                         children: [
                           TextSpan(
                             text: "Sign In",
@@ -339,10 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ..onTap = () {
                                     Navigator.pop(context);
                                   },
-                            style: AppTextStyles.body2(
-                              fontweight: FontWeight.w700,
-                              color: AppColor.mainGreen,
-                            ),
+                            style: AppTextStyles.body2(fontweight: FontWeight.w700, color: AppColor.mainGreen),
                           ),
                         ],
                       ),

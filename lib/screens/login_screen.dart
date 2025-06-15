@@ -21,22 +21,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
-    bool login = await DbHelper.authenticateUser(
-      username: usernameController.text,
-      password: passwordController.text,
-    );
-    if (login) {
+    int? userId = await DbHelper.authenticateUser(username: usernameController.text, password: passwordController.text);
+    if (userId != null) {
       PreferenceHandler.setLogin(true);
-      PreferenceHandler.setUsername(usernameController.text);
-      UserModel? userData = await DbHelper.getUserData(
-        username: usernameController.text,
-      );
+      PreferenceHandler.setUserId(userId);
+      UserModel? userData = await DbHelper.getUserData(userId: userId);
       if (userData != null) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (context) => MainScreen(userData: userData),
-          ),
+          MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
           (route) => false,
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,10 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: Text(
                   "Welcome, ${userData.name}",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
                 ),
               ),
             ),
@@ -66,10 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: Text(
                   "User data is empty",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
                 ),
               ),
             ),
@@ -85,10 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Center(
               child: Text(
                 "User doesn't exist",
-                style: AppTextStyles.body1(
-                  fontweight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
               ),
             ),
           ),
@@ -123,10 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Center(
             child: SingleChildScrollView(
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                 margin: const EdgeInsets.all(24),
                 padding: EdgeInsets.symmetric(horizontal: 28, vertical: 40),
                 child: Column(
@@ -136,28 +117,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     Image.asset(AssetsImages.appLogoCropped, width: 140),
                     Text(
                       "Welcome Back",
-                      style: AppTextStyles.heading2(
-                        fontweight: FontWeight.w900,
-                        color: AppColor.mainGreen,
-                      ),
+                      style: AppTextStyles.heading2(fontweight: FontWeight.w900, color: AppColor.mainGreen),
                     ),
                     SizedBox(height: 4),
                     Text(
                       "Login to access your account",
-                      style: AppTextStyles.body2(
-                        fontweight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                     ),
                     SizedBox(height: 24),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Username",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w500, color: Colors.black),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -188,10 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Password",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w500, color: Colors.black),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -227,16 +196,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child:
                               isPasswordVisible
-                                  ? Icon(
-                                    Icons.visibility_outlined,
-                                    size: 24,
-                                    color: Colors.grey,
-                                  )
-                                  : Icon(
-                                    Icons.visibility_off_outlined,
-                                    size: 24,
-                                    color: Colors.grey,
-                                  ),
+                                  ? Icon(Icons.visibility_outlined, size: 24, color: Colors.grey)
+                                  : Icon(Icons.visibility_off_outlined, size: 24, color: Colors.grey),
                         ),
                       ),
                     ),
@@ -247,18 +208,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColor.mainGreen,
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        onPressed:
-                            isUsernameValid && isPasswordValid ? _login : null,
+                        onPressed: isUsernameValid && isPasswordValid ? _login : null,
                         child: Text(
                           "Login",
-                          style: AppTextStyles.body1(
-                            fontweight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.white),
                         ),
                       ),
                     ),
@@ -266,10 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text.rich(
                       TextSpan(
                         text: "Don't have an account? ",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w400, color: Colors.black),
                         children: [
                           TextSpan(
                             text: "Sign Up",
@@ -278,15 +230,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ..onTap = () {
                                     usernameController.clear();
                                     passwordController.clear();
-                                    Navigator.pushNamed(
-                                      context,
-                                      RegisterScreen.id,
-                                    );
+                                    Navigator.pushNamed(context, RegisterScreen.id);
                                   },
-                            style: AppTextStyles.body2(
-                              fontweight: FontWeight.w700,
-                              color: AppColor.mainGreen,
-                            ),
+                            style: AppTextStyles.body2(fontweight: FontWeight.w700, color: AppColor.mainGreen),
                           ),
                         ],
                       ),

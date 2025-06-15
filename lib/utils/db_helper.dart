@@ -44,22 +44,12 @@ class DbHelper {
   static Future<void> insertUserData({required UserModel data}) async {
     Database database = await _db();
     print("data : ${data.toMap()}");
-    await database.insert(
-      userTable,
-      data.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await database.insert(userTable, data.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<bool> checkUserDataAvailability({
-    required String username,
-  }) async {
+  static Future<bool> checkUserDataAvailability({required String username}) async {
     Database database = await _db();
-    final user = await database.query(
-      userTable,
-      where: "username = ?",
-      whereArgs: [username],
-    );
+    final user = await database.query(userTable, where: "username = ?", whereArgs: [username]);
 
     if (user.isNotEmpty) {
       return true;
@@ -68,10 +58,7 @@ class DbHelper {
     }
   }
 
-  static Future<bool> authenticateUser({
-    required String username,
-    required String password,
-  }) async {
+  static Future<int?> authenticateUser({required String username, required String password}) async {
     Database database = await _db();
     List<Map<String, dynamic>> data = await database.query(
       userTable,
@@ -79,19 +66,15 @@ class DbHelper {
       whereArgs: [username, password],
     );
     if (data.isNotEmpty) {
-      return true;
+      return UserModel.fromMap(data.first).id!;
     } else {
-      return false;
+      return null;
     }
   }
 
-  static Future<UserModel?> getUserData({required String username}) async {
+  static Future<UserModel?> getUserData({required int userId}) async {
     Database database = await _db();
-    List<Map<String, dynamic>> data = await database.query(
-      userTable,
-      where: "username = ?",
-      whereArgs: [username],
-    );
+    List<Map<String, dynamic>> data = await database.query(userTable, where: "id = ?", whereArgs: [userId]);
     if (data.isNotEmpty) {
       return UserModel.fromMap(data.first);
     } else {
@@ -99,31 +82,18 @@ class DbHelper {
     }
   }
 
-  static Future<void> updateUserTarget({required String username, required int target}) async {
+  static Future<void> updateUserTarget({required int userId, required int target}) async {
     Database database = await _db();
-    await database.update(
-      userTable,
-      {'monthly_expense': target},
-      where: "username = ?",
-      whereArgs: [username],
-    );
+    await database.update(userTable, {'monthly_expense': target}, where: "id = ?", whereArgs: [userId]);
   }
 
-  static Future<void> insertTransactionData({
-    required TransactionModel data,
-  }) async {
+  static Future<void> insertTransactionData({required TransactionModel data}) async {
     Database database = await _db();
     print("data : ${data.toMap()}");
-    await database.insert(
-      transactionTable,
-      data.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await database.insert(transactionTable, data.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<void> updateTransactionData({
-    required TransactionModel data,
-  }) async {
+  static Future<void> updateTransactionData({required TransactionModel data}) async {
     Database database = await _db();
     print("data : ${data.toMap()}");
     await database.update(
@@ -140,15 +110,9 @@ class DbHelper {
     await database.delete(transactionTable, where: "id = ?", whereArgs: [id]);
   }
 
-  static Future<List<TransactionModel>> getTransactionData({
-    required int userId,
-  }) async {
+  static Future<List<TransactionModel>> getTransactionData({required int userId}) async {
     Database database = await _db();
-    List<Map<String, dynamic>> data = await database.query(
-      transactionTable,
-      where: "user_id = ?",
-      whereArgs: [userId],
-    );
+    List<Map<String, dynamic>> data = await database.query(transactionTable, where: "user_id = ?", whereArgs: [userId]);
     return data.map((e) => TransactionModel.fromMap(e)).toList();
   }
 }

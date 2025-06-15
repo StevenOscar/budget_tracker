@@ -1,5 +1,6 @@
 import 'package:budget_tracker/models/category_model.dart';
 import 'package:budget_tracker/models/transaction_model.dart';
+import 'package:budget_tracker/providers/transaction_provider.dart';
 import 'package:budget_tracker/styles/app_color.dart';
 import 'package:budget_tracker/styles/app_text_styles.dart';
 import 'package:budget_tracker/utils/date_formatter.dart';
@@ -7,16 +8,12 @@ import 'package:budget_tracker/utils/db_helper.dart';
 import 'package:budget_tracker/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatefulWidget {
   static const String id = "/detail";
-  final Future<void> Function() loadTransaction;
   final TransactionModel transaction;
-  const DetailScreen({
-    super.key,
-    required this.loadTransaction,
-    required this.transaction,
-  });
+  const DetailScreen({super.key, required this.transaction});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -39,16 +36,13 @@ class _DetailScreenState extends State<DetailScreen> {
     selectedCategory = widget.transaction.category;
     dateValue = widget.transaction.date;
     timeValue = widget.transaction.time;
-    amountController = TextEditingController(
-      text: widget.transaction.amount.toString(),
-    );
-    notesController = TextEditingController(
-      text: widget.transaction.note ?? "",
-    );
+    amountController = TextEditingController(text: widget.transaction.amount.toString());
+    notesController = TextEditingController(text: widget.transaction.note ?? "");
   }
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider = context.read<TransactionProvider>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -64,11 +58,7 @@ class _DetailScreenState extends State<DetailScreen> {
             icon: CircleAvatar(
               radius: 20,
               backgroundColor: AppColor.mainGreen40,
-              child: Icon(
-                Icons.arrow_back,
-                size: 28,
-                color: AppColor.mainGreen,
-              ),
+              child: Icon(Icons.arrow_back, size: 28, color: AppColor.mainGreen),
             ),
           ),
         ),
@@ -82,11 +72,7 @@ class _DetailScreenState extends State<DetailScreen> {
             icon: CircleAvatar(
               radius: 18,
               backgroundColor: AppColor.mainGreen40,
-              child: Icon(
-                isEdit ? Icons.cancel : Icons.edit,
-                size: 23,
-                color: AppColor.mainGreen,
-              ),
+              child: Icon(isEdit ? Icons.cancel : Icons.edit, size: 23, color: AppColor.mainGreen),
             ),
           ),
           IconButton(
@@ -98,19 +84,13 @@ class _DetailScreenState extends State<DetailScreen> {
                       title: Center(
                         child: Text(
                           "Delete Data",
-                          style: AppTextStyles.heading2(
-                            fontweight: FontWeight.w700,
-                            color: AppColor.mainGreen,
-                          ),
+                          style: AppTextStyles.heading2(fontweight: FontWeight.w700, color: AppColor.mainGreen),
                         ),
                       ),
                       content: Text(
                         "Are you sure want to delete this data?",
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.body1(
-                          fontweight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.body1(fontweight: FontWeight.w400, color: Colors.black),
                       ),
                       actions: [
                         TextButton(
@@ -121,13 +101,10 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            await DbHelper.deleteTransactionData(
-                              widget.transaction.id!,
-                            );
-                            widget.loadTransaction().then((_) {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            });
+                            await DbHelper.deleteTransactionData(widget.transaction.id!);
+                            await transactionProvider.loadTransaction();
+                            Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                           child: Text("Delete"),
                         ),
@@ -145,10 +122,7 @@ class _DetailScreenState extends State<DetailScreen> {
         ],
         title: Text(
           "${isEdit ? "Edit" : "Detail"} Transaction",
-          style: AppTextStyles.heading3(
-            fontweight: FontWeight.w700,
-            color: AppColor.mainGreen,
-          ),
+          style: AppTextStyles.heading3(fontweight: FontWeight.w700, color: AppColor.mainGreen),
         ),
       ),
       body: Padding(
@@ -159,10 +133,7 @@ class _DetailScreenState extends State<DetailScreen> {
               children: [
                 SizedBox(height: 8),
                 Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.mainGreen40,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  decoration: BoxDecoration(color: AppColor.mainGreen40, borderRadius: BorderRadius.circular(16)),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                   child: Column(
                     children: [
@@ -172,10 +143,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.calendar_month,
-                                color: AppColor.mainGreen,
-                              ),
+                              Icon(Icons.calendar_month, color: AppColor.mainGreen),
                               SizedBox(width: 8),
                               Text(
                                 DateFormatter.formatDayDateMonthYear(dateValue),
@@ -211,17 +179,14 @@ class _DetailScreenState extends State<DetailScreen> {
                               children: [
                                 Expanded(
                                   child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColor.mainGreen,
-                                    ),
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppColor.mainGreen),
                                     onPressed: () async {
-                                      final DateTime? selectedDate =
-                                          await showDatePicker(
-                                            context: context,
-                                            initialDate: dateValue,
-                                            firstDate: DateTime(2000),
-                                            lastDate: DateTime.now(),
-                                          );
+                                      final DateTime? selectedDate = await showDatePicker(
+                                        context: context,
+                                        initialDate: dateValue,
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime.now(),
+                                      );
                                       if (selectedDate != null) {
                                         setState(() {
                                           dateValue = selectedDate;
@@ -230,25 +195,19 @@ class _DetailScreenState extends State<DetailScreen> {
                                     },
                                     child: Text(
                                       "Select Date",
-                                      style: AppTextStyles.body2(
-                                        fontweight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                      style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.white),
                                     ),
                                   ),
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
                                   child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColor.mainGreen,
-                                    ),
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppColor.mainGreen),
                                     onPressed: () async {
-                                      final TimeOfDay? selectedTime =
-                                          await showTimePicker(
-                                            context: context,
-                                            initialTime: timeValue,
-                                          );
+                                      final TimeOfDay? selectedTime = await showTimePicker(
+                                        context: context,
+                                        initialTime: timeValue,
+                                      );
                                       if (selectedTime != null) {
                                         setState(() {
                                           timeValue = selectedTime;
@@ -257,10 +216,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     },
                                     child: Text(
                                       "Select Time",
-                                      style: AppTextStyles.body2(
-                                        fontweight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                      style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -290,13 +246,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           }
                           : null,
                 ),
-                Text(
-                  "Expense",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
+                Text("Expense", style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black)),
                 SizedBox(width: 20),
                 Radio(
                   value: 1,
@@ -312,13 +262,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           }
                           : null,
                 ),
-                Text(
-                  "Income",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
+                Text("Income", style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.black)),
               ],
             ),
             SizedBox(height: 8),
@@ -329,10 +273,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 padding: const EdgeInsets.only(left: 15, top: 14, bottom: 15),
                 child: Text(
                   "Rp.  ",
-                  style: AppTextStyles.body1(
-                    fontweight: FontWeight.w700,
-                    color: AppColor.mainGreen,
-                  ),
+                  style: AppTextStyles.body1(fontweight: FontWeight.w700, color: AppColor.mainGreen),
                 ),
               ),
               onChanged: (value) {
@@ -352,16 +293,9 @@ class _DetailScreenState extends State<DetailScreen> {
                 }
                 return null;
               },
-              contentPadding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 20,
-                bottom: 16,
-              ),
+              contentPadding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
               inputFormatters: [
-                FilteringTextInputFormatter.deny(
-                  RegExp(r'[+!@#$%^&*(),.?":{}|<>]]'),
-                ),
+                FilteringTextInputFormatter.deny(RegExp(r'[+!@#$%^&*(),.?":{}|<>]]')),
                 FilteringTextInputFormatter.deny(RegExp(r'[a-zA-Z]')),
               ],
               hintText: "Amount",
@@ -400,12 +334,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(
-                                      e.category,
-                                      style: AppTextStyles.body1(
-                                        fontweight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    Text(e.category, style: AppTextStyles.body1(fontweight: FontWeight.w500)),
                                   ],
                                 ),
                               ),
@@ -419,12 +348,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   children: [
                                     Icon(e.icon, color: AppColor.mainGreen),
                                     SizedBox(width: 20),
-                                    Text(
-                                      e.category,
-                                      style: AppTextStyles.body1(
-                                        fontweight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    Text(e.category, style: AppTextStyles.body1(fontweight: FontWeight.w500)),
                                   ],
                                 ),
                               ),
@@ -448,9 +372,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColor.mainGreen,
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                     ),
                     onPressed:
                         isAmountValid
@@ -467,7 +389,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   time: timeValue,
                                 ),
                               );
-                              await widget.loadTransaction();
+                              await transactionProvider.loadTransaction();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   backgroundColor: AppColor.mainGreen,
@@ -476,10 +398,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     child: Center(
                                       child: Text(
                                         "Transaction Edited",
-                                        style: AppTextStyles.body1(
-                                          fontweight: FontWeight.w500,
-                                          color: Colors.white,
-                                        ),
+                                        style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
                                       ),
                                     ),
                                   ),
@@ -488,13 +407,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               Navigator.pop(context, true);
                             }
                             : null,
-                    child: Text(
-                      "Edit",
-                      style: AppTextStyles.body1(
-                        fontweight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: Text("Edit", style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.white)),
                   ),
                 )
                 : SizedBox(),

@@ -16,22 +16,13 @@ class ProfileScreen extends StatelessWidget {
       extendBody: true,
       backgroundColor: AppColor.mainGreen,
       appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: AppTextStyles.heading3(
-            fontweight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
+        title: Text("Profile", style: AppTextStyles.heading3(fontweight: FontWeight.w700, color: Colors.white)),
         centerTitle: true,
         backgroundColor: AppColor.mainGreen,
       ),
       body: Center(
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-          ),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
           padding: EdgeInsets.all(28),
           margin: EdgeInsets.symmetric(horizontal: 32),
           child: Column(
@@ -49,10 +40,7 @@ class ProfileScreen extends StatelessWidget {
                       backgroundColor: AppColor.mainGreen40,
                       child: Text(
                         userData.name[0],
-                        style: AppTextStyles.heading3(
-                          fontweight: FontWeight.w600,
-                          color: AppColor.mainGreen,
-                        ),
+                        style: AppTextStyles.heading3(fontweight: FontWeight.w600, color: AppColor.mainGreen),
                       ),
                     ),
                   ),
@@ -61,26 +49,14 @@ class ProfileScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        userData.name,
-                        style: AppTextStyles.body1(
-                          fontweight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
+                      Text(userData.name, style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.black)),
                       Text(
                         "Username : ${userData.username}",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w600,
-                          color: Colors.grey.shade700,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.grey.shade700),
                       ),
                       Text(
                         "Phone : ${userData.phoneNumber}",
-                        style: AppTextStyles.body2(
-                          fontweight: FontWeight.w600,
-                          color: Colors.grey.shade700,
-                        ),
+                        style: AppTextStyles.body2(fontweight: FontWeight.w600, color: Colors.grey.shade700),
                       ),
                     ],
                   ),
@@ -93,26 +69,14 @@ class ProfileScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     padding: EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                   ),
                   onPressed: () async {
-                    PreferenceHandler.deleteUsername();
+                    PreferenceHandler.deleteUserId();
                     PreferenceHandler.deleteLogin();
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      LoginScreen.id,
-                      (route) => false,
-                    );
+                    Navigator.pushNamedAndRemoveUntil(context, LoginScreen.id, (route) => false);
                   },
-                  child: Text(
-                    "Log out",
-                    style: AppTextStyles.body1(
-                      fontweight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: Text("Log out", style: AppTextStyles.body1(fontweight: FontWeight.w600, color: Colors.white)),
                 ),
               ),
             ],

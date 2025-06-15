@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceHandler {
   static final String _loginKey = "login";
-  static final String _usernameKey = "username";
+  static final String _userIdKey = "user_id";
 
   static Future<bool> getLogin() async {
     final prefs = await SharedPreferences.getInstance();
@@ -20,19 +20,19 @@ class PreferenceHandler {
     prefs.remove(_loginKey);
   }
 
-  static Future<String> getUsername() async {
+  static Future<int> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString(_usernameKey) ?? "";
-    return username;
+    int userId = prefs.getInt(_userIdKey) ?? 0;
+    return userId;
   }
 
-  static void setUsername(String username) async {
+  static void setUserId(int userId) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(_usernameKey, username);
+    prefs.setInt(_userIdKey, userId);
   }
 
-  static void deleteUsername() async {
+  static void deleteUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove(_usernameKey);
+    prefs.remove(_userIdKey);
   }
 }
