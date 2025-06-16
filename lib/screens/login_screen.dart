@@ -32,25 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
           (route) => false,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColor.mainGreen,
-            content: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Center(
-                child: Text(
-                  "Welcome, ${userData.name}",
-                  style: AppTextStyles.body1(fontweight: FontWeight.w500, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        );
       } else {
         PreferenceHandler.setLogin(false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: Colors.red.shade800, width: 2),
+            ),
             content: Padding(
               padding: const EdgeInsets.all(12),
               child: Center(
@@ -66,9 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.red.shade800, width: 2),
+          ),
           content: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             child: Center(
               child: Text(
                 "User doesn't exist",

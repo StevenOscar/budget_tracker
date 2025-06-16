@@ -392,6 +392,11 @@ class _DetailScreenState extends State<DetailScreen> {
                               await transactionProvider.loadTransaction();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(color: Colors.green.shade900, width: 2),
+                                  ),
                                   backgroundColor: AppColor.mainGreen,
                                   content: Padding(
                                     padding: const EdgeInsets.all(8),

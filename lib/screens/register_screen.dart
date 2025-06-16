@@ -31,7 +31,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (isUserDuplicate) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.red.shade800, width: 2),
+          ),
           content: Padding(
             padding: const EdgeInsets.all(12),
             child: Center(
@@ -55,7 +60,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.green.shade900, width: 2),
+          ),
+          backgroundColor: AppColor.mainGreen,
           content: Padding(
             padding: const EdgeInsets.all(12),
             child: Center(
